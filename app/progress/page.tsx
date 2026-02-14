@@ -76,26 +76,29 @@ export default function ProgressPage() {
             </div>
 
             {/* Smart Recommendation */}
-            <Card className="mb-4" style={{ borderColor: getRecommendationColor() }}>
-                <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                        <div
-                            className="w-12 h-12 rounded-full flex items-center justify-center"
-                            style={{ backgroundColor: `${getRecommendationColor()}20` }}
-                        >
-                            <Icons.TrendingUp size={24} style={{ color: getRecommendationColor() }} />
+            <<div className="mb-4 border-2 rounded-lg" style={{ borderColor: getRecommendationColor() }}>
+                <Card>>
+                    <CardContent className="p-4">
+                        <div className="flex items-center gap-3">
+                            <div
+                                className="w-12 h-12 rounded-full flex items-center justify-center"
+                                style={{ backgroundColor: `${getRecommendationColor()}20` }}
+                            >
+                                <Icons.TrendingUp size={24} style={{ color: getRecommendationColor() }} />
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-semibold text-[var(--text-primary)] mb-1">
+                                    Recommandation
+                                </p>
+                                <p className="text-lg font-bold" style={{ color: getRecommendationColor() }}>
+                                    {getRecommendationText()}
+                                </p>
+                            </div>
                         </div>
-                        <div className="flex-1">
-                            <p className="font-semibold text-[var(--text-primary)] mb-1">
-                                Recommandation
-                            </p>
-                            <p className="text-lg font-bold" style={{ color: getRecommendationColor() }}>
-                                {getRecommendationText()}
-                            </p>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            </div>
+
 
             {/* Waist Measurement */}
             <Card className="mb-4">
