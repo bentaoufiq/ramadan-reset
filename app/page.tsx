@@ -1,65 +1,250 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import { MobileLayout } from '@/components/layout/mobile-layout';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ProgressBar } from '@/components/ui/progress-bar';
+import { Icons } from '@/components/ui/icons';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { calculateProgress, getMotivationalMessage } from '@/lib/utils/calculations';
+import type { DailyMetrics, User } from '@/types';
+
+export default function DashboardPage() {
+  const [user, setUser] = useLocalStorage<User>('user', {
+    weight: 80,
+    startDate: new Date().toISOString(),
+    currentWeek: 1,
+    currentDay: 1,
+  });
+
+  const [todayMetrics, setTodayMetrics] = useLocalStorage<DailyMetrics>('today-metrics', {
+    date: new Date().toISOString().split('T')[0],
+    steps: 0,
+    hydration: 0,
+    energy: 7,
+    sleep: 7,
+    libido: 7,
+    motivation: 7,
+    workoutCompleted: false,
+    mobilityCompleted: false,
+    walkCompleted: false,
+  });
+
+  const [streak, setStreak] = useLocalStorage<number>('streak', 0);
+
+  // Calculate current progress
+  useEffect(() => {
+    const progress = calculateProgress(user.startDate);
+    if (progress.week !== user.currentWeek || progress.day !== user.currentDay) {
+      setUser({ ...user, currentWeek: progress.week, currentDay: progress.day });
+    }
+  }, []);
+
+  const updateSteps = (delta: number) => {
+    setTodayMetrics({ ...todayMetrics, steps: Math.max(0, todayMetrics.steps + delta) });
+  };
+
+  const updateHydration = (delta: number) => {
+    setTodayMetrics({
+      ...todayMetrics,
+      hydration: Math.max(0, Math.min(3, todayMetrics.hydration + delta))
+    });
+  };
+
+  const progressPercentage = (user.currentDay / 28) * 100;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <MobileLayout>
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
+          Ramadan Reset
+        </h1>
+        <p className="text-[var(--text-secondary)]">
+          {getMotivationalMessage(streak, progressPercentage)}
+        </p>
+      </div>
+
+      {/* Week/Day Progress */}
+      <Card className="mb-4">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Semaine {user.currentWeek} • Jour {user.currentDay}</CardTitle>
+            <Icons.Moon size={24} className="text-[var(--accent)]" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ProgressBar value={user.currentDay} max={28} />
+          <p className="text-sm text-[var(--text-muted)] mt-2">
+            {28 - user.currentDay} jours restants
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        </CardContent>
+      </Card>
+
+      {/* Today's Workout */}
+      <Card className="mb-4">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Séance du jour</CardTitle>
+            {todayMetrics.workoutCompleted && (
+              <Icons.Check size={20} className="text-[var(--success)]" />
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-[var(--text-primary)] font-medium">
+                Circuit métabolique S{user.currentWeek}
+              </p>
+              <p className="text-sm text-[var(--text-secondary)]">
+                20-30 min • {user.currentWeek <= 2 ? '3 tours' : '4 tours'}
+              </p>
+            </div>
+            <Icons.Dumbbell size={32} className="text-[var(--accent)]" />
+          </div>
+          <Button
+            variant="primary"
+            className="w-full"
+            onClick={() => window.location.href = '/training'}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <Icons.Play size={20} />
+            Lancer l'entraînement
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Quick Metrics Grid */}
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        {/* Steps Counter */}
+        <Card hover={false}>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-[var(--text-secondary)]">Pas</span>
+              <Icons.Flame size={16} className="text-[var(--accent)]" />
+            </div>
+            <div className="text-2xl font-bold text-[var(--text-primary)] mb-3">
+              {todayMetrics.steps.toLocaleString()}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => updateSteps(-100)}
+                className="flex-1 bg-[var(--bg-tertiary)] hover:bg-[var(--bg-secondary)] rounded-lg p-2 transition-colors"
+              >
+                <Icons.Minus size={16} className="mx-auto" />
+              </button>
+              <button
+                onClick={() => updateSteps(100)}
+                className="flex-1 bg-[var(--accent)] hover:bg-[var(--accent-light)] rounded-lg p-2 transition-colors"
+              >
+                <Icons.Plus size={16} className="mx-auto" />
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Hydration */}
+        <Card hover={false}>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-[var(--text-secondary)]">Hydratation</span>
+              <Icons.Droplet size={16} className="text-[var(--accent)]" />
+            </div>
+            <div className="text-2xl font-bold text-[var(--text-primary)] mb-3">
+              {todayMetrics.hydration.toFixed(1)}L
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => updateHydration(-0.25)}
+                className="flex-1 bg-[var(--bg-tertiary)] hover:bg-[var(--bg-secondary)] rounded-lg p-2 transition-colors"
+              >
+                <Icons.Minus size={16} className="mx-auto" />
+              </button>
+              <button
+                onClick={() => updateHydration(0.25)}
+                className="flex-1 bg-[var(--accent)] hover:bg-[var(--accent-light)] rounded-lg p-2 transition-colors"
+              >
+                <Icons.Plus size={16} className="mx-auto" />
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Reminders */}
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>Rappels du jour</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div
+            className={`flex items-center gap-3 p-3 rounded-lg transition-all ${todayMetrics.mobilityCompleted
+                ? 'bg-[var(--accent-dark)] border border-[var(--accent)]'
+                : 'bg-[var(--bg-tertiary)]'
+              }`}
+            onClick={() => setTodayMetrics({ ...todayMetrics, mobilityCompleted: !todayMetrics.mobilityCompleted })}
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${todayMetrics.mobilityCompleted
+                ? 'border-[var(--success)] bg-[var(--success)]'
+                : 'border-[var(--text-muted)]'
+              }`}>
+              {todayMetrics.mobilityCompleted && <Icons.Check size={16} />}
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-[var(--text-primary)]">
+                Mobilité quotidienne
+              </p>
+              <p className="text-xs text-[var(--text-secondary)]">5-10 min</p>
+            </div>
+          </div>
+
+          <div
+            className={`flex items-center gap-3 p-3 rounded-lg transition-all ${todayMetrics.walkCompleted
+                ? 'bg-[var(--accent-dark)] border border-[var(--accent)]'
+                : 'bg-[var(--bg-tertiary)]'
+              }`}
+            onClick={() => setTodayMetrics({ ...todayMetrics, walkCompleted: !todayMetrics.walkCompleted })}
+          >
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${todayMetrics.walkCompleted
+                ? 'border-[var(--success)] bg-[var(--success)]'
+                : 'border-[var(--text-muted)]'
+              }`}>
+              {todayMetrics.walkCompleted && <Icons.Check size={16} />}
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-[var(--text-primary)]">
+                Marche post-Ftour
+              </p>
+              <p className="text-xs text-[var(--text-secondary)]">10-15 min</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Energy Quick Check */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Énergie du jour</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center gap-2 py-4">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => (
+              <button
+                key={level}
+                onClick={() => setTodayMetrics({ ...todayMetrics, energy: level })}
+                className={`w-8 h-8 rounded-full transition-all ${todayMetrics.energy >= level
+                    ? 'bg-[var(--accent)] scale-110'
+                    : 'bg-[var(--bg-tertiary)] hover:bg-[var(--bg-secondary)]'
+                  }`}
+              />
+            ))}
+          </div>
+          <p className="text-center text-sm text-[var(--text-secondary)]">
+            Niveau: {todayMetrics.energy}/10
+          </p>
+        </CardContent>
+      </Card>
+    </MobileLayout>
   );
 }
