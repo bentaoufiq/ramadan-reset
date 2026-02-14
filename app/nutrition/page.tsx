@@ -106,8 +106,8 @@ export default function NutritionPage() {
                             <div
                                 key={i}
                                 className={`flex-1 h-2 rounded-full transition-all ${hydration >= (i + 1) * 0.25
-                                        ? 'bg-[var(--accent)]'
-                                        : 'bg-[var(--bg-tertiary)]'
+                                    ? 'bg-[var(--accent)]'
+                                    : 'bg-[var(--bg-tertiary)]'
                                     }`}
                             />
                         ))}
@@ -151,8 +151,8 @@ export default function NutritionPage() {
                 <button
                     onClick={() => setSelectedTab('ftour')}
                     className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${selectedTab === 'ftour'
-                            ? 'bg-[var(--accent)] text-[var(--text-primary)]'
-                            : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+                        ? 'bg-[var(--accent)] text-[var(--text-primary)]'
+                        : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                         }`}
                 >
                     Ftour
@@ -160,8 +160,8 @@ export default function NutritionPage() {
                 <button
                     onClick={() => setSelectedTab('suhoor')}
                     className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${selectedTab === 'suhoor'
-                            ? 'bg-[var(--accent)] text-[var(--text-primary)]'
-                            : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+                        ? 'bg-[var(--accent)] text-[var(--text-primary)]'
+                        : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                         }`}
                 >
                     Suhoor
@@ -169,8 +169,8 @@ export default function NutritionPage() {
                 <button
                     onClick={() => setSelectedTab('avoid')}
                     className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${selectedTab === 'avoid'
-                            ? 'bg-[var(--accent)] text-[var(--text-primary)]'
-                            : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+                        ? 'bg-[var(--accent)] text-[var(--text-primary)]'
+                        : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                         }`}
                 >
                     À éviter

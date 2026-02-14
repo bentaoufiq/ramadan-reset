@@ -29,9 +29,9 @@ export default function ProgressPage() {
     });
 
     const saveWeeklyMetrics = () => {
-        const existing = weeklyMetrics.find(m => m.week === user.currentWeek);
+        const existing = weeklyMetrics.find((m: WeeklyMetrics) => m.week === user.currentWeek);
         if (existing) {
-            setWeeklyMetrics(weeklyMetrics.map(m =>
+            setWeeklyMetrics(weeklyMetrics.map((m: WeeklyMetrics) =>
                 m.week === user.currentWeek ? currentMetrics as WeeklyMetrics : m
             ));
         } else {
@@ -58,7 +58,7 @@ export default function ProgressPage() {
         return '➡️ Maintenir';
     };
 
-    const baselineWaist = weeklyMetrics.find(m => m.week === 1)?.waistMeasurement || 0;
+    const baselineWaist = weeklyMetrics.find((m: WeeklyMetrics) => m.week === 1)?.waistMeasurement || 0;
     const waistChange = currentMetrics.waistMeasurement && baselineWaist
         ? currentMetrics.waistMeasurement - baselineWaist
         : 0;
@@ -84,7 +84,9 @@ export default function ProgressPage() {
                                 className="w-12 h-12 rounded-full flex items-center justify-center"
                                 style={{ backgroundColor: `${getRecommendationColor()}20` }}
                             >
-                                <Icons.TrendingUp size={24} style={{ color: getRecommendationColor() }} />
+                                <div style={{ color: getRecommendationColor() }}>
+                                    <Icons.TrendingUp size={24} />
+                                </div>
                             </div>
                             <div className="flex-1">
                                 <p className="font-semibold text-[var(--text-primary)] mb-1">
@@ -171,22 +173,22 @@ export default function ProgressPage() {
                     <MetricSlider
                         label="Énergie moyenne"
                         value={currentMetrics.averageEnergy || 7}
-                        onChange={(val) => setCurrentMetrics({ ...currentMetrics, averageEnergy: val })}
+                        onChange={(val: number) => setCurrentMetrics({ ...currentMetrics, averageEnergy: val })}
                     />
                     <MetricSlider
                         label="Qualité sommeil"
                         value={currentMetrics.averageSleep || 7}
-                        onChange={(val) => setCurrentMetrics({ ...currentMetrics, averageSleep: val })}
+                        onChange={(val: number) => setCurrentMetrics({ ...currentMetrics, averageSleep: val })}
                     />
                     <MetricSlider
                         label="Libido"
                         value={currentMetrics.averageLibido || 7}
-                        onChange={(val) => setCurrentMetrics({ ...currentMetrics, averageLibido: val })}
+                        onChange={(val: number) => setCurrentMetrics({ ...currentMetrics, averageLibido: val })}
                     />
                     <MetricSlider
                         label="Motivation"
                         value={currentMetrics.averageMotivation || 7}
-                        onChange={(val) => setCurrentMetrics({ ...currentMetrics, averageMotivation: val })}
+                        onChange={(val: number) => setCurrentMetrics({ ...currentMetrics, averageMotivation: val })}
                     />
                 </CardContent>
             </Card>
@@ -208,7 +210,7 @@ export default function ProgressPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
-                            {weeklyMetrics.sort((a, b) => b.week - a.week).map((metric) => (
+                            {weeklyMetrics.sort((a: WeeklyMetrics, b: WeeklyMetrics) => b.week - a.week).map((metric: WeeklyMetrics) => (
                                 <div
                                     key={metric.week}
                                     className="p-3 bg-[var(--bg-tertiary)] rounded-lg"
