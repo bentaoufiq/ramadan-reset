@@ -76,8 +76,8 @@ export default function ProgressPage() {
             </div>
 
             {/* Smart Recommendation */}
-            <<div className="mb-4 border-2 rounded-lg" style={{ borderColor: getRecommendationColor() }}>
-                <Card>>
+            <div className="mb-4 border-2 rounded-lg" style={{ borderColor: getRecommendationColor() }}>
+                <Card>
                     <CardContent className="p-4">
                         <div className="flex items-center gap-3">
                             <div
